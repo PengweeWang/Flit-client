@@ -828,3 +828,167 @@ code, .mono {
 
 .settings-btn.secondary { background: transparent; border: 1px solid #555; color: #aaa; }
 .settings-btn.secondary:hover { border-color: #888; color: #ccc; }
+
+/* ====== IDENTITY PROMPT ====== */
+.identity-overlay {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.identity-card {
+  background: #16213e;
+  border: 1px solid #0f3460;
+  border-radius: 16px;
+  padding: 40px 32px 32px;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  animation: fadeIn 0.25s ease;
+}
+
+.identity-title {
+  font-size: 32px;
+  color: #e94560;
+  margin-bottom: 8px;
+}
+
+.identity-subtitle {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 28px;
+}
+
+.identity-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.identity-input {
+  padding: 14px 16px;
+  border: 1px solid #0f3460;
+  border-radius: 10px;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font-size: 16px;
+  outline: none;
+  text-align: center;
+  transition: border-color 0.15s;
+}
+
+.identity-input:focus {
+  border-color: #e94560;
+}
+
+.identity-input::placeholder {
+  color: #555;
+}
+
+.identity-btn {
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  background: #e94560;
+  color: white;
+  transition: background 0.15s;
+}
+
+.identity-btn:hover:not(:disabled) {
+  background: #d63851;
+}
+
+.identity-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ====== MOBILE RESPONSIVE ====== */
+@media (max-width: 768px) {
+  .title-bar-mobile {
+    height: 48px;
+    padding: 0 16px;
+    -webkit-app-region: no-drag;
+  }
+  .title-bar-mobile .title-bar-text {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .launcher {
+    max-width: 100%;
+    padding: 16px;
+  }
+  .launcher-header h1 {
+    font-size: 22px;
+  }
+  .launcher-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .launcher-divider {
+    display: none;
+  }
+
+  .online-users {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 260px;
+    z-index: 100;
+    box-shadow: -4px 0 16px rgba(0,0,0,0.4);
+  }
+  .online-users.collapsed {
+    width: 0;
+    overflow: hidden;
+  }
+
+  .settings-overlay {
+    top: 0;
+  }
+  .settings-panel {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .back-btn-overlay {
+    top: 4px;
+    left: 4px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .bubble-list-wrapper {
+    padding: 4px 8px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .launcher {
+    padding: 12px;
+    gap: 12px;
+  }
+  .launcher-header h1 {
+    font-size: 18px;
+  }
+  .launcher-actions {
+    gap: 8px;
+  }
+  .launcher-form {
+    padding: 12px;
+  }
+
+  .online-users {
+    width: 100%;
+  }
+
+  .settings-body {
+    padding: 16px;
+  }
+}

@@ -9,11 +9,18 @@ import Launcher from "./components/Launcher";
 import RoomView from "./components/RoomView";
 import SettingsPanel from "./components/SettingsPanel";
 import TitleBar from "./components/TitleBar";
+import IdentityPrompt from "./components/IdentityPrompt";
 import "./App.css";
 
 function App() {
   const [ready, setReady] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [needsIdentity, setNeedsIdentity] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setReady(true), 8000);
+    return () => clearTimeout(timer);
+  }, []);
   const serverUrl = useChatStore((s) => s.serverUrl);
   const setServerUrl = useChatStore((s) => s.setServerUrl);
   const setIdentity = useChatStore((s) => s.setIdentity);
@@ -37,6 +44,11 @@ function App() {
         const saved = await getSetting("last_server_url");
         if (saved) setServerUrl(saved);
         const info = await getSystemInfo();
+        if (!info.identity) {
+          setNeedsIdentity(true);
+          setReady(true);
+          return;
+        }
         setIdentity(info.identity);
         const url = getWsUrl(saved || serverUrl, info.identity);
         wsClient.connect(url);
@@ -47,6 +59,14 @@ function App() {
       setReady(true);
     })();
   }, []);
+
+  const handleIdentityConfirm = async (name: string) => {
+    await setSetting("identity", name);
+    setIdentity(name);
+    setNeedsIdentity(false);
+    const url = getWsUrl(useChatStore.getState().serverUrl, name);
+    wsClient.connect(url);
+  };
 
   const handleReconnect = () => {
     wsClient.disconnect();
@@ -73,6 +93,15 @@ function App() {
   };
 
   const currentRoom = rooms.find((r) => r.room_id === currentRoomId);
+
+  if (needsIdentity) {
+    return (
+      <div className="app">
+        <TitleBar />
+        <IdentityPrompt onConfirm={handleIdentityConfirm} />
+      </div>
+    );
+  }
 
   if (!ready) {
     return (

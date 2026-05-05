@@ -1,19 +1,37 @@
 import { useState, useEffect } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
+let isMobile = false;
+try {
+  isMobile = /android|iphone|ipad/i.test(navigator.userAgent);
+} catch {
+  // ignore
+}
+
 export default function TitleBar() {
   const [maximized, setMaximized] = useState(false);
-  const appWindow = getCurrentWindow();
+  const appWindow = !isMobile ? getCurrentWindow() : null;
 
   useEffect(() => {
+    if (!appWindow) return;
     appWindow.onResized(() => {
       appWindow.isMaximized().then(setMaximized);
     });
   }, []);
 
-  const handleMinimize = () => appWindow.minimize();
-  const handleMaximize = () => appWindow.toggleMaximize();
-  const handleClose = () => appWindow.close();
+  if (isMobile) {
+    return (
+      <div className="title-bar title-bar-mobile">
+        <div className="title-bar-left">
+          <span className="title-bar-text">Flit</span>
+        </div>
+      </div>
+    );
+  }
+
+  const handleMinimize = () => appWindow!.minimize();
+  const handleMaximize = () => appWindow!.toggleMaximize();
+  const handleClose = () => appWindow!.close();
 
   return (
     <div className="title-bar" data-tauri-drag-region>

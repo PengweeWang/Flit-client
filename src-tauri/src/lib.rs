@@ -1,17 +1,40 @@
 use std::env;
 
-#[tauri::command]
-fn get_os_username() -> String {
-    env::var("USERNAME")
-        .or_else(|_| env::var("USER"))
+#[cfg(not(target_os = "android"))]
+fn get_os_username_impl() -> String {
+    env::var("USER")
+        .or_else(|_| env::var("USERNAME"))
+        .or_else(|_| env::var("LOGNAME"))
+        .unwrap_or_else(|_| "unknown".to_string())
+}
+
+#[cfg(target_os = "android")]
+fn get_os_username_impl() -> String {
+    "unknown".to_string()
+}
+
+#[cfg(not(target_os = "android"))]
+fn get_hostname_impl() -> String {
+    env::var("HOSTNAME")
+        .or_else(|_| env::var("COMPUTERNAME"))
+        .unwrap_or_else(|_| "unknown".to_string())
+}
+
+#[cfg(target_os = "android")]
+fn get_hostname_impl() -> String {
+    hostname::get()
+        .map(|h| h.to_string_lossy().to_string())
         .unwrap_or_else(|_| "unknown".to_string())
 }
 
 #[tauri::command]
+fn get_os_username() -> String {
+    get_os_username_impl()
+}
+
+#[tauri::command]
 fn get_hostname() -> String {
-    env::var("COMPUTERNAME")
-        .or_else(|_| env::var("HOSTNAME"))
-        .unwrap_or_else(|_| "unknown".to_string())
+    get_hostname_impl()
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

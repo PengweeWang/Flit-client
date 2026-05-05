@@ -1,4 +1,4 @@
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useState } from "react";
 import { Sender } from "@ant-design/x";
 
 interface Props {
@@ -8,6 +8,7 @@ interface Props {
 }
 
 export default function MessageInput({ onSend, onTyping, disabled }: Props) {
+  const [value, setValue] = useState("");
   const typingRef = useRef(false);
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -23,21 +24,24 @@ export default function MessageInput({ onSend, onTyping, disabled }: Props) {
     }, 2000);
   }, [onTyping]);
 
-  const handleSubmit = useCallback((value: string) => {
-    const content = value.trim();
+  const handleSubmit = useCallback((val: string) => {
+    const content = val.trim();
     if (!content) return;
     onSend(content);
+    setValue("");
     if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
     typingRef.current = false;
     onTyping(false);
   }, [onSend, onTyping]);
 
-  const handleChange = useCallback((value: string) => {
-    if (value) handleTyping();
+  const handleChange = useCallback((val: string) => {
+    setValue(val);
+    if (val) handleTyping();
   }, [handleTyping]);
 
   return (
     <Sender
+      value={value}
       onSubmit={handleSubmit}
       onChange={handleChange}
       placeholder="Type a message..."
