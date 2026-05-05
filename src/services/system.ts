@@ -4,16 +4,14 @@ export interface SystemInfo {
   username: string;
   hostname: string;
   identity: string;
-  ip: string;
 }
 
 export async function getSystemInfo(): Promise<SystemInfo> {
-  const [username, hostname, ip] = await Promise.all([
+  const [username, hostname] = await Promise.all([
     getOsUsername(),
     getOsHostname(),
-    getPublicIp(),
   ]);
-  return { username, hostname, identity: `${username}@${hostname}`, ip };
+  return { username, hostname, identity: `${username}@${hostname}` };
 }
 
 async function getOsUsername(): Promise<string> {
@@ -32,22 +30,3 @@ async function getOsHostname(): Promise<string> {
   }
 }
 
-async function getPublicIp(): Promise<string> {
-  try {
-    const res = await fetch("https://api.ipify.org?format=json", {
-      signal: AbortSignal.timeout(5000),
-    });
-    const data = await res.json();
-    return data.ip || "0.0.0.0";
-  } catch {
-    try {
-      const res = await fetch("http://ip-api.com/json", {
-        signal: AbortSignal.timeout(5000),
-      });
-      const data = await res.json();
-      return data.query || "0.0.0.0";
-    } catch {
-      return "0.0.0.0";
-    }
-  }
-}

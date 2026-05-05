@@ -33,13 +33,17 @@ function App() {
 
   useEffect(() => {
     (async () => {
-      const saved = await getSetting("last_server_url");
-      if (saved) setServerUrl(saved);
-      const info = await getSystemInfo();
-      setIdentity(info.identity);
-      const url = getWsUrl(saved || serverUrl, info.identity);
-      wsClient.connect(url);
-      if (saved) setSetting("last_server_url", saved);
+      try {
+        const saved = await getSetting("last_server_url");
+        if (saved) setServerUrl(saved);
+        const info = await getSystemInfo();
+        setIdentity(info.identity);
+        const url = getWsUrl(saved || serverUrl, info.identity);
+        wsClient.connect(url);
+        if (saved) setSetting("last_server_url", saved);
+      } catch (err) {
+        console.error("Init failed:", err);
+      }
       setReady(true);
     })();
   }, []);
